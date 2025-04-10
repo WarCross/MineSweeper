@@ -7,7 +7,7 @@
         <p class="game-info">Уровень сложности: {{ settingsStore.difficulty }}</p>
         <p class="game-info">Размер поля: {{ settingsStore.rows }}x{{ settingsStore.cols }}</p>
         <p class="game-info">Осталось мин: {{ totalMines - flaggedMines }}</p>
-        <p class="game-info">Прошедшее время: {{ formattedTime }}</p>
+        <p class="game-info">Осталось времени: {{ formattedTime }}</p>
 
         <v-btn color="primary" @click="restartGame" class="restart-button">
           <v-icon left>mdi-restart</v-icon>
@@ -21,11 +21,6 @@
 </template>
 
 <script>
-import { useSettingsStore } from '../stores/settings'
-import { ref, onMounted, computed } from 'vue'
-import GameBoard from '../components/GameBoard.vue'
-import { useRouter } from 'vue-router'
-
 export default {
   components: {
     GameBoard,
@@ -34,7 +29,7 @@ export default {
     const settingsStore = useSettingsStore()
     const board = ref([])
     const gameover = ref(false)
-    const elapsedTime = ref(0)
+    const timeLeft = ref(0)
     const timerInterval = ref(null)
     const gameStarted = ref(false)
     const router = useRouter()
@@ -52,6 +47,21 @@ export default {
       }
       return count
     })
+
+    const setTimeLimit = () => {
+      const rows = settingsStore.rows
+      const cols = settingsStore.cols
+
+      if (rows === 8 && cols === 8) {
+        timeLeft.value = 10 * 60
+      } else if (rows === 16 && cols === 16) {
+        timeLeft.value = 20 * 60
+      } else if (rows === 32 && cols === 32) {
+        timeLeft.value = 30 * 60
+      } else {
+        timeLeft.value = 15 * 60
+      }
+    }
 
     const generateBoard = () => {
       const rows = settingsStore.rows
@@ -117,9 +127,14 @@ export default {
     }
 
     const startTimer = () => {
-      elapsedTime.value = 0 // Сбросьте время перед началом
       timerInterval.value = setInterval(() => {
-        elapsedTime.value++ // Увеличивайте время каждую секунду
+        timeLeft.value--
+
+        if (timeLeft.value <= 0) {
+          stopTimer()
+          gameover.value = true
+          alert('Время истекло! Вы проиграли.')
+        }
       }, 1000)
     }
 
@@ -128,8 +143,8 @@ export default {
     }
 
     const formattedTime = computed(() => {
-      const minutes = Math.floor(elapsedTime.value / 60)
-      const seconds = elapsedTime.value % 60
+      const minutes = Math.floor(timeLeft.value / 60)
+      const seconds = timeLeft.value % 60
       return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
     })
 
@@ -140,7 +155,7 @@ export default {
 
       if (!gameStarted.value) {
         gameStarted.value = true
-        startTimer() // Запустите таймер при первом клике
+        startTimer()
 
         // Если первый клик на мину, перемещаем ее
         if (board.value[row][col].isMine) {
@@ -160,41 +175,15 @@ export default {
             if (cell.isMine) {
               cell.isVisible = true
             }
-          }),
-        )
-        return
+          });
+          this.cells[i].adjacentMines = count;
+        }
       }
-
-      if (board.value[row][col].adjacentMines === 0) {
-        openAdjacentCells(row, col)
-      }
-
-      checkWin()
-    }
-
-    const moveMine = (row, col) => {
-      let newRow, newCol
-      const rows = settingsStore.rows
-      const cols = settingsStore.cols
-
-      // Ищем случайную клетку без мины
-      do {
-        newRow = Math.floor(Math.random() * rows)
-        newCol = Math.floor(Math.random() * cols)
-      } while (board.value[newRow][newCol].isMine)
-
-      // Перемещаем мину
-      board.value[row][col].isMine = false
-      board.value[newRow][newCol].isMine = true
-
-      // Пересчитываем adjacentMines для затронутых клеток
-      recalculateAdjacentMines(row, col)
-      recalculateAdjacentMines(newRow, newCol)
-    }
-
-    const recalculateAdjacentMines = (row, col) => {
-      const rows = settingsStore.rows
-      const cols = settingsStore.cols
+    },
+    getNeighbors(index) {
+      const neighbors = [];
+      const row = Math.floor(index / this.gridSize);
+      const col = index % this.gridSize;
 
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
@@ -268,6 +257,7 @@ export default {
     }
 
     const checkWin = () => {
+      let allNonMineCellsOpen = true
       let cellsToOpen = settingsStore.rows * settingsStore.cols - settingsStore.mines
       let openedCells = 0
       for (let row = 0; row < settingsStore.rows; row++) {
@@ -290,7 +280,14 @@ export default {
       if (name) {
         const result = {
           name: name,
-          time: elapsedTime.value, // Используем прошедшее время
+          time:
+            settingsStore.rows === 8
+              ? 600 - timeLeft.value
+              : settingsStore.rows === 16
+                ? 1200 - timeLeft.value
+                : settingsStore.rows === 32
+                  ? 1800 - timeLeft.value
+                  : 900 - timeLeft.value, // Вычисляем потраченное время
           date: new Date().toLocaleDateString(),
         }
 
@@ -310,10 +307,10 @@ export default {
     const restartGame = () => {
       gameover.value = false
       gameStarted.value = false
-      elapsedTime.value = 0 // Сбросьте время
+      timeLeft.value = 0
       stopTimer()
       generateBoard()
-      // removе setTimeLimit() если больше не нужно
+      setTimeLimit()
     }
 
     const goToSettings = () => {
@@ -322,6 +319,7 @@ export default {
 
     onMounted(() => {
       generateBoard()
+      setTimeLimit()
     })
 
     return {
@@ -337,11 +335,14 @@ export default {
       flaggedMines,
     }
   },
-}
+};
 </script>
 
 <style scoped>
-.game-view-container {
+.game-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 20px;
 }
 
@@ -353,16 +354,16 @@ export default {
 .game-info {
   margin-bottom: 5px;
   color: #555;
-  text-align: center; /* Центрируем текст */
+  text-align: center; /*  Центрируем текст */
 }
 .button-container {
   display: grid;
-  place-items: center; /* Центрируем кнопку по горизонтали и вертикали */
+  place-items: center; /*  Центрируем кнопку по горизонтали и вертикали */
 }
 
 .restart-button {
   margin-top: 10px;
   width: 150px; /* Задаем конкретную ширину */
-  margin: 0 auto; /* Центрируем кнопку */
+  margin: 0 auto; /*  Центрируем кнопку */
 }
 </style>
