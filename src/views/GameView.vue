@@ -288,7 +288,6 @@ export default {
     }
 
     const checkWin = () => {
-      let allNonMineCellsOpen = true
       let cellsToOpen = settingsStore.rows * settingsStore.cols - settingsStore.mines
       let openedCells = 0
       for (let row = 0; row < settingsStore.rows; row++) {
@@ -318,7 +317,7 @@ export default {
                 ? 1200 - timeLeft.value
                 : settingsStore.rows === 32
                   ? 1800 - timeLeft.value
-                  : 900 - timeLeft.value, // Вычисляем потраченное время
+                  : 900 - timeLeft.value,
           date: new Date().toLocaleDateString(),
         }
 
@@ -345,7 +344,7 @@ export default {
     }
 
     const goToSettings = () => {
-      router.push('/') // Перенаправляем на главный экран (настройки)
+      router.push('/')
     }
 
     onMounted(() => {
@@ -381,16 +380,16 @@ export default {
 .game-info {
   margin-bottom: 5px;
   color: #555;
-  text-align: center; /*  Центрируем текст */
+  text-align: center;
 }
 .button-container {
   display: grid;
-  place-items: center; /*  Центрируем кнопку по горизонтали и вертикали */
+  place-items: center;
 }
 
 .restart-button {
   margin-top: 10px;
-  width: 150px; /* Задаем конкретную ширину */
-  margin: 0 auto; /*  Центрируем кнопку */
+  width: 150px;
+  margin: 0 auto;
 }
 </style>

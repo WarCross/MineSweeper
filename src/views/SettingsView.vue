@@ -23,12 +23,12 @@
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSettingsStore } from '../stores/settings' // Импортируем store
+import { useSettingsStore } from '../stores/settings'
 
 export default {
   setup() {
-    const settingsStore = useSettingsStore() // Используем store
-    const selectedDifficulty = ref(settingsStore.difficulty) // Получаем значение из store
+    const settingsStore = useSettingsStore()
+    const selectedDifficulty = ref(settingsStore.difficulty)
     const router = useRouter()
 
     const startGame = () => {

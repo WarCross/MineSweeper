@@ -1,14 +1,9 @@
-// src/main.js
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify'
-import { createPinia } from 'pinia' // Импортируем createPinia
+import { createPinia } from 'pinia'
 
-const pinia = createPinia() // Создаем экземпляр Pinia
+const pinia = createPinia()
 
-createApp(App)
-  .use(router)
-  .use(vuetify)
-  .use(pinia) // Используем Pinia
-  .mount('#app')
+createApp(App).use(router).use(vuetify).use(pinia).mount('#app')

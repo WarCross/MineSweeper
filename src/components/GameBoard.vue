@@ -43,9 +43,9 @@ export default {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: 100%; /* Занимаем всю доступную ширину */
-  max-width: 500px; /* Ограничиваем максимальную ширину */
-  margin: 20px auto; /* Центрируем по горизонтали и добавляем отступ */
+  width: 100%;
+  max-width: 320px;
+  margin: 20px auto;
 }
 
 .game-row {

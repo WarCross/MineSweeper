@@ -43,9 +43,9 @@ export default {
   font-size: 1.2rem;
   text-align: center;
   cursor: pointer;
-  background-color: #eee; /* Цвет закрытой клетки */
-  flex: 1 0 auto; /*  Важно для правильного распределения места */
-  aspect-ratio: 1 / 1; /*  Ячейки всегда квадратные */
+  background-color: #eee;
+  flex: 1 0 auto;
+  aspect-ratio: 1 / 1;
 }
 
 .cell:hover {
@@ -58,7 +58,6 @@ export default {
   cursor: default;
 }
 
-/* Цвета для чисел */
 .cell:nth-child(1n).is-visible {
   color: blue;
 }
@@ -82,5 +81,9 @@ export default {
 }
 .cell:nth-child(8n).is-visible {
   color: gray;
+}
+.cell {
+  min-width: 30px;
+  min-height: 30px;
 }
 </style>
