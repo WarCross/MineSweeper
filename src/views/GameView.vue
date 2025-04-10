@@ -117,9 +117,9 @@ export default {
     }
 
     const startTimer = () => {
-      elapsedTime.value = 0 // Сбросьте время перед началом
+      elapsedTime.value = 0
       timerInterval.value = setInterval(() => {
-        elapsedTime.value++ // Увеличивайте время каждую секунду
+        elapsedTime.value++
       }, 1000)
     }
 
@@ -140,9 +140,8 @@ export default {
 
       if (!gameStarted.value) {
         gameStarted.value = true
-        startTimer() // Запустите таймер при первом клике
+        startTimer()
 
-        // Если первый клик на мину, перемещаем ее
         if (board.value[row][col].isMine) {
           moveMine(row, col)
         }
@@ -240,8 +239,7 @@ export default {
       if (board.value[row][col].isFlagged) {
         if (flaggedMines.value > totalMines.value) {
           // Добавлена проверка
-          board.value[row][col].isFlagged = false // Отменяем установку флага
-          //  Здесь можно добавить какое-то сообщение пользователю, что нельзя установить больше флажков.
+          board.value[row][col].isFlagged = false
         }
       }
     }
@@ -267,10 +265,15 @@ export default {
       }
     }
 
+    let isGameWon = false
+
     const checkWin = () => {
+      if (isGameWon) return
+
       let allNonMineCellsOpen = true
       let cellsToOpen = settingsStore.rows * settingsStore.cols - settingsStore.mines
       let openedCells = 0
+
       for (let row = 0; row < settingsStore.rows; row++) {
         for (let col = 0; col < settingsStore.cols; col++) {
           if (board.value[row][col].isVisible && !board.value[row][col].isMine) {
@@ -278,8 +281,10 @@ export default {
           }
         }
       }
+
       if (openedCells === cellsToOpen) {
-        alert('You Win!') // TODO: Replace with better UI
+        isGameWon = true
+        alert('You Win!')
         gameover.value = true
         stopTimer()
         saveResult()
@@ -291,7 +296,7 @@ export default {
       if (name) {
         const result = {
           name: name,
-          time: elapsedTime.value, // Используем прошедшее время
+          time: elapsedTime.value,
           date: new Date().toLocaleDateString(),
         }
 
@@ -318,7 +323,7 @@ export default {
     }
 
     const goToSettings = () => {
-      router.push('/') // Перенаправляем на главный экран (настройки)
+      router.push('/')
     }
 
     onMounted(() => {
@@ -354,16 +359,16 @@ export default {
 .game-info {
   margin-bottom: 5px;
   color: #555;
-  text-align: center; /* Центрируем текст */
+  text-align: center;
 }
 .button-container {
   display: grid;
-  place-items: center; /* Центрируем кнопку по горизонтали и вертикали */
+  place-items: center;
 }
 
 .restart-button {
   margin-top: 10px;
-  width: 150px; /* Задаем конкретную ширину */
-  margin: 0 auto; /* Центрируем кнопку */
+  width: 150px;
+  margin: 0 auto; /*
 }
 </style>
