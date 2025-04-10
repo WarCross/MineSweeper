@@ -1,8 +1,9 @@
+// src/stores/settings.js
 import { defineStore } from 'pinia'
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
-    difficulty: 'easy',
+    difficulty: 'easy', // Значение по умолчанию
     rows: 8,
     cols: 8,
     mines: 10,

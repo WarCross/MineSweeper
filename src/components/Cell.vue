@@ -1,21 +1,25 @@
 <template>
   <button
     class="cell"
-    :class="{ 'is-visible': cell.isVisible }"
+    :class="{
+      'is-visible': cell.isVisible,
+    }"
     @click="$emit('click')"
     @contextmenu="handleRightClick"
   >
-    {{
-      cell.isVisible
-        ? cell.isMine
-          ? '💣'
-          : cell.adjacentMines > 0
-            ? cell.adjacentMines
+    <span class="cell-content">
+      {{
+        cell.isVisible
+          ? cell.isMine
+            ? '💣'
+            : cell.adjacentMines > 0
+              ? cell.adjacentMines
+              : ''
+          : cell.isFlagged
+            ? '🚩'
             : ''
-        : cell.isFlagged
-          ? '🚩'
-          : ''
-    }}
+      }}
+    </span>
   </button>
 </template>
 
@@ -46,18 +50,36 @@ export default {
   background-color: #eee;
   flex: 1 0 auto;
   aspect-ratio: 1 / 1;
+  width: v-bind(cellSize + 'px'); /* Динамическая ширина ячейки */
+  height: v-bind(cellSize + 'px'); /* Динамическая высота ячейки */
+  position: relative;
+  box-sizing: border-box; /*  Чтобы border не влиял на размеры */
 }
 
 .cell:hover {
   background-color: #ddd;
 }
 
-.cell.is-visible {
-  background-color: #fff; /* Цвет открытой клетки */
-  border: none;
-  cursor: default;
+.cell-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-size: 1em; /* Фиксированный размер шрифта */
+  box-sizing: border-box;
 }
 
+.cell.is-visible {
+  background-color: #fff;
+  font-size: 1em; /* Фиксированный размер шрифта для открытых ячеек */
+}
+
+/* Цвета для чисел */
 .cell:nth-child(1n).is-visible {
   color: blue;
 }
@@ -81,9 +103,5 @@ export default {
 }
 .cell:nth-child(8n).is-visible {
   color: gray;
-}
-.cell {
-  min-width: 30px;
-  min-height: 30px;
 }
 </style>
