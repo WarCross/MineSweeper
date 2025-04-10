@@ -12,5 +12,5 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  base: '/MineSweeper/',
+  base: '/MineSweeper/', //  Замените "minesweeper-vue" на имя своего репозитория!
 })
