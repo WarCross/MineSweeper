@@ -8,17 +8,19 @@
     @contextmenu="handleRightClick"
   >
     <span class="cell-content">
-      {{
-        cell.isVisible
-          ? cell.isMine
-            ? '💣'
-            : cell.adjacentMines > 0
-              ? cell.adjacentMines
+      <span :class="cellValueClass">
+        {{
+          cell.isVisible
+            ? cell.isMine
+              ? '💣'
+              : cell.adjacentMines > 0
+                ? cell.adjacentMines
+                : ''
+            : cell.isFlagged
+              ? '🚩'
               : ''
-          : cell.isFlagged
-            ? '🚩'
-            : ''
-      }}
+        }}
+      </span>
     </span>
   </button>
 </template>
@@ -32,6 +34,32 @@ export default {
     },
   },
   emits: ['click', 'rightclick'],
+  computed: {
+    cellValueClass() {
+      if (!this.cell.isVisible) return ''
+      if (this.cell.isMine) return '' // Для мины нет цвета
+      switch (this.cell.adjacentMines) {
+        case 1:
+          return 'mine-count-1'
+        case 2:
+          return 'mine-count-2'
+        case 3:
+          return 'mine-count-3'
+        case 4:
+          return 'mine-count-4'
+        case 5:
+          return 'mine-count-5'
+        case 6:
+          return 'mine-count-6'
+        case 7:
+          return 'mine-count-7'
+        case 8:
+          return 'mine-count-8'
+        default:
+          return ''
+      }
+    },
+  },
   methods: {
     handleRightClick(event) {
       event.preventDefault() // Prevent default context menu
@@ -49,11 +77,11 @@ export default {
   cursor: pointer;
   background-color: #eee;
   flex: 1 0 auto;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 1; /* Соотношение сторон 1:1 */
   width: v-bind(cellSize + 'px'); /* Динамическая ширина ячейки */
   height: v-bind(cellSize + 'px'); /* Динамическая высота ячейки */
   position: relative;
-  box-sizing: border-box; /*  Чтобы border не влиял на размеры */
+  box-sizing: border-box; /* Чтобы border не влиял на размеры */
 }
 
 .cell:hover {
@@ -80,28 +108,28 @@ export default {
 }
 
 /* Цвета для чисел */
-.cell:nth-child(1n).is-visible {
+.mine-count-1 {
   color: blue;
 }
-.cell:nth-child(2n).is-visible {
+.mine-count-2 {
   color: green;
 }
-.cell:nth-child(3n).is-visible {
+.mine-count-3 {
   color: red;
 }
-.cell:nth-child(4n).is-visible {
-  color: purple;
+.mine-count-4 {
+  color: darkblue;
 }
-.cell:nth-child(5n).is-visible {
-  color: maroon;
+.mine-count-5 {
+  color: brown;
 }
-.cell:nth-child(6n).is-visible {
-  color: teal;
+.mine-count-6 {
+  color: turquoise;
 }
-.cell:nth-child(7n).is-visible {
+.mine-count-7 {
   color: black;
 }
-.cell:nth-child(8n).is-visible {
-  color: gray;
+.mine-count-8 {
+  color: white;
 }
 </style>
